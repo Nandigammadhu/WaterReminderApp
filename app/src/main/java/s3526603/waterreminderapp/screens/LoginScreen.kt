@@ -26,9 +26,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoginScreen(onLoginClick: () -> Unit) {
+fun LoginScreen(
+    onLoginClick: (String, String) -> Unit,
+    onCreateAccountClick: (String, String) -> Unit
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -54,9 +58,7 @@ fun LoginScreen(onLoginClick: () -> Unit) {
         Card(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            ),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
             elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
         ) {
             Column(
@@ -64,7 +66,10 @@ fun LoginScreen(onLoginClick: () -> Unit) {
             ) {
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                        errorMessage = ""
+                    },
                     label = { Text("Email") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp)
@@ -74,16 +79,37 @@ fun LoginScreen(onLoginClick: () -> Unit) {
 
                 OutlinedTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        password = it
+                        errorMessage = ""
+                    },
                     label = { Text("Password") },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(14.dp)
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
 
                 Button(
-                    onClick = onLoginClick,
+                    onClick = {
+                        if (email.trim().isEmpty() || password.trim().isEmpty()) {
+                            errorMessage = "Please enter both email and password"
+                        } else if (password.trim().length < 6) {
+                            errorMessage = "Password must be at least 6 characters"
+                        } else {
+                            onLoginClick(email.trim(), password.trim())
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -96,7 +122,15 @@ fun LoginScreen(onLoginClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        if (email.trim().isEmpty() || password.trim().isEmpty()) {
+                            errorMessage = "Please enter both email and password"
+                        } else if (password.trim().length < 6) {
+                            errorMessage = "Password must be at least 6 characters"
+                        } else {
+                            onCreateAccountClick(email.trim(), password.trim())
+                        }
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(

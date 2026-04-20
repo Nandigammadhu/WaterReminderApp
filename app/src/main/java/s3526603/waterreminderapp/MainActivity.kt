@@ -1,10 +1,16 @@
 package s3526603.waterreminderapp
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.delay
 import s3526603.waterreminderapp.screens.HomeScreen
 import s3526603.waterreminderapp.screens.LoginScreen
@@ -16,6 +22,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         NotificationHelper.createNotificationChannel(this)
+
         setContent {
             MaterialTheme {
                 val context = this
@@ -39,7 +46,110 @@ class MainActivity : ComponentActivity() {
 
                     !showHome -> {
                         LoginScreen(
-                            onLoginClick = { showHome = true }
+                            onLoginClick = { email, password ->
+                                FirebaseManager.auth
+                                    .signInWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(
+                                                context,
+                                                "Sign in successful",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                            val userId = FirebaseManager.auth.currentUser?.uid
+
+                                            if (userId != null) {
+                                                FirebaseManager.db.collection("users")
+                                                    .document(userId)
+                                                    .get()
+                                                    .addOnSuccessListener { document ->
+                                                        if (document.exists()) {
+                                                            goal = document.getLong("goal")?.toInt() ?: goal
+                                                            intake = document.getLong("intake")?.toInt() ?: intake
+
+                                                            DataManager.saveGoal(context, goal)
+                                                            DataManager.saveIntake(context, intake)
+
+                                                            val interval =
+                                                                document.getString("interval") ?: "2 hours"
+                                                            val notificationsEnabled =
+                                                                document.getBoolean("notificationsEnabled") ?: true
+
+                                                            DataManager.saveInterval(context, interval)
+                                                            DataManager.saveNotificationsEnabled(
+                                                                context,
+                                                                notificationsEnabled
+                                                            )
+                                                        }
+                                                        showHome = true
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Failed to load cloud data: ${e.message}",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                        showHome = true
+                                                    }
+                                            } else {
+                                                showHome = true
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Sign in failed: ${task.exception?.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                            },
+                            onCreateAccountClick = { email, password ->
+                                FirebaseManager.auth
+                                    .createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener { task ->
+                                        if (task.isSuccessful) {
+                                            Toast.makeText(
+                                                context,
+                                                "Account created successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+
+                                            val userId = FirebaseManager.auth.currentUser?.uid
+
+                                            if (userId != null) {
+                                                val userData = hashMapOf(
+                                                    "goal" to goal,
+                                                    "intake" to intake,
+                                                    "interval" to DataManager.getInterval(context),
+                                                    "notificationsEnabled" to DataManager.getNotificationsEnabled(context)
+                                                )
+
+                                                FirebaseManager.db.collection("users")
+                                                    .document(userId)
+                                                    .set(userData)
+                                                    .addOnSuccessListener {
+                                                        showHome = true
+                                                    }
+                                                    .addOnFailureListener { e ->
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Firestore save failed: ${e.message}",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
+                                            } else {
+                                                showHome = true
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                context,
+                                                "Create account failed: ${task.exception?.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                            }
                         )
                     }
 
@@ -53,6 +163,21 @@ class MainActivity : ComponentActivity() {
                                 DataManager.saveGoal(context, newGoal)
                                 DataManager.saveInterval(context, newInterval)
                                 DataManager.saveNotificationsEnabled(context, notificationsEnabled)
+
+                                val userId = FirebaseManager.auth.currentUser?.uid
+                                if (userId != null) {
+                                    val userData = hashMapOf(
+                                        "goal" to newGoal,
+                                        "intake" to intake,
+                                        "interval" to newInterval,
+                                        "notificationsEnabled" to notificationsEnabled
+                                    )
+
+                                    FirebaseManager.db.collection("users")
+                                        .document(userId)
+                                        .set(userData)
+                                }
+
                                 showSettings = false
                             },
                             onTestNotificationClick = {
@@ -68,14 +193,35 @@ class MainActivity : ComponentActivity() {
                             onAdd250 = {
                                 intake += 250
                                 DataManager.saveIntake(context, intake)
+
+                                val userId = FirebaseManager.auth.currentUser?.uid
+                                if (userId != null) {
+                                    FirebaseManager.db.collection("users")
+                                        .document(userId)
+                                        .update("intake", intake)
+                                }
                             },
                             onAdd500 = {
                                 intake += 500
                                 DataManager.saveIntake(context, intake)
+
+                                val userId = FirebaseManager.auth.currentUser?.uid
+                                if (userId != null) {
+                                    FirebaseManager.db.collection("users")
+                                        .document(userId)
+                                        .update("intake", intake)
+                                }
                             },
                             onReset = {
                                 intake = 0
                                 DataManager.saveIntake(context, intake)
+
+                                val userId = FirebaseManager.auth.currentUser?.uid
+                                if (userId != null) {
+                                    FirebaseManager.db.collection("users")
+                                        .document(userId)
+                                        .update("intake", intake)
+                                }
                             },
                             onSettingsClick = { showSettings = true }
                         )
