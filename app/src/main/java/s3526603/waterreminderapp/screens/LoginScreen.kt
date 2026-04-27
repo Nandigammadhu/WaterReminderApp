@@ -1,5 +1,6 @@
 package s3526603.waterreminderapp.screens
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -7,9 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -90,17 +91,19 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "💧 Welcome",
+                text = "💧 Welcome Back",
                 style = MaterialTheme.typography.headlineMedium,
-                color = Color(0xFF0D47A1)
+                color = Color(0xFF0D47A1),
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Sign in to save and restore your hydration data",
+                text = "✨ Sign in to save and restore your hydration journey",
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFF546E7A)
+                color = Color(0xFF546E7A),
+                fontWeight = FontWeight.Bold
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -176,7 +179,7 @@ fun LoginScreen(
                             containerColor = Color(0xFF01579B)
                         )
                     ) {
-                        Text("Sign In")
+                        Text(" Sign In")
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -197,7 +200,7 @@ fun LoginScreen(
                             containerColor = Color(0xFF4FC3F7)
                         )
                     ) {
-                        Text("Create Account")
+                        Text(" Create Account")
                     }
                 }
             }

@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -20,8 +22,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -75,7 +75,7 @@ fun ReminderScreen(
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Manage your goal and notification preferences",
+            text = "✨ Manage your goal and reminder preferences",
             style = MaterialTheme.typography.bodyMedium,
             color = Color(0xFF546E7A)
         )
@@ -92,7 +92,7 @@ fun ReminderScreen(
                 modifier = Modifier.padding(20.dp)
             ) {
                 Text(
-                    text = "Current Summary",
+                    text = "🎯 Current Summary",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color(0xFF01579B)
                 )
@@ -100,14 +100,14 @@ fun ReminderScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Daily Goal: $currentGoal ml",
+                    text = "💧 Daily Goal: $currentGoal ml",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
                 Spacer(modifier = Modifier.height(6.dp))
 
                 Text(
-                    text = "Reminder Interval: $currentInterval",
+                    text = "⏳ Reminder Interval: $currentInterval",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
@@ -115,9 +115,9 @@ fun ReminderScreen(
 
                 Text(
                     text = if (currentNotificationsEnabled) {
-                        "Notifications: Enabled"
+                        "🔔 Notifications: Enabled"
                     } else {
-                        "Notifications: Disabled"
+                        "🔕 Notifications: Disabled"
                     },
                     style = MaterialTheme.typography.bodyLarge
                 )
@@ -136,7 +136,7 @@ fun ReminderScreen(
                 modifier = Modifier.padding(18.dp)
             ) {
                 Text(
-                    text = "Update Preferences",
+                    text = "🛠️ Update Preferences",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color(0xFF01579B)
                 )
@@ -169,7 +169,7 @@ fun ReminderScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "Enable Notifications",
+                        text = "🔔 Enable Notifications",
                         style = MaterialTheme.typography.titleMedium
                     )
 
@@ -191,7 +191,7 @@ fun ReminderScreen(
                 containerColor = Color(0xFF4FC3F7)
             )
         ) {
-            Text("Test Reminder Notification")
+            Text("🔔 Test Reminder Notification")
         }
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -210,7 +210,7 @@ fun ReminderScreen(
                 containerColor = Color(0xFF01579B)
             )
         ) {
-            Text("Save Settings")
+            Text("💾 Save Settings")
         }
     }
 }

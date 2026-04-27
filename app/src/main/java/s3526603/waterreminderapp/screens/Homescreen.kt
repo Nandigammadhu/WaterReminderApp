@@ -1,5 +1,6 @@
 package s3526603.waterreminderapp.screens
 
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,9 +20,11 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun HomeScreen(
@@ -39,10 +42,10 @@ fun HomeScreen(
     val percentage = (safeProgress * 100).toInt()
 
     val statusMessage = when {
-        percentage >= 100 -> "Goal completed! Great job 🎉"
-        percentage >= 75 -> "Almost there, keep going 💧"
-        percentage >= 40 -> "Nice progress so far 🙌"
-        else -> "A good start for the day 🌊"
+        percentage >= 100 -> "👏 Amazing! You completed your goal today!"
+        percentage >= 75 -> "💪 Almost there! Keep sipping!"
+        percentage >= 40 -> "✨ Great progress! Stay hydrated!"
+        else -> "🌊 A good start for the day!"
     }
 
     Column(
@@ -57,15 +60,17 @@ fun HomeScreen(
         Text(
             text = "💧 Water Reminder",
             style = MaterialTheme.typography.headlineMedium,
-            color = Color(0xFF0D47A1)
+            color = Color(0xFF0D47A1),
+                    fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(6.dp))
 
         Text(
-            text = "Track your hydration and stay consistent every day",
+            text = "✨ Stay healthy, fresh, and hydrated every day",
             style = MaterialTheme.typography.bodyMedium,
-            color = Color(0xFF546E7A)
+            color = Color(0xFF546E7A),
+            fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -80,9 +85,10 @@ fun HomeScreen(
                 modifier = Modifier.padding(22.dp)
             ) {
                 Text(
-                    text = "Today's Progress",
+                    text = "🎯 Today's Progress",
                     style = MaterialTheme.typography.titleLarge,
-                    color = Color(0xFF01579B)
+                    color = Color(0xFF01579B),
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -93,21 +99,62 @@ fun HomeScreen(
                     color = Color(0xFF263238)
                 )
 
-                Spacer(modifier = Modifier.height(14.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-                LinearProgressIndicator(
-                    progress = { safeProgress },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(12.dp)
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "🥛",
+                        fontSize = 26.sp
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    LinearProgressIndicator(
+                        progress = { safeProgress },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(12.dp)
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text = "💧",
+                        fontSize = 24.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "Start",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF607D8B),
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(
+                        text = "Goal",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color(0xFF607D8B),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "$percentage% completed",
+                    text = "💦 $percentage% completed",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF37474F)
+                    color = Color(0xFF37474F),
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -115,7 +162,8 @@ fun HomeScreen(
                 Text(
                     text = statusMessage,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF0277BD)
+                    color = Color(0xFF0277BD),
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
@@ -132,9 +180,10 @@ fun HomeScreen(
                 modifier = Modifier.padding(18.dp)
             ) {
                 Text(
-                    text = "Quick Add",
+                    text = "➕ Quick Add",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color(0xFF01579B)
+                    color = Color(0xFF01579B),
+                    fontWeight = FontWeight.Bold
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -151,7 +200,7 @@ fun HomeScreen(
                             containerColor = Color(0xFF81D4FA)
                         )
                     ) {
-                        Text("+100 ml")
+                        Text("🥛 +100")
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
@@ -164,7 +213,7 @@ fun HomeScreen(
                             containerColor = Color(0xFF4FC3F7)
                         )
                     ) {
-                        Text("+250 ml")
+                        Text("🥛 +250")
                     }
 
                     Spacer(modifier = Modifier.width(10.dp))
@@ -177,7 +226,7 @@ fun HomeScreen(
                             containerColor = Color(0xFF29B6F6)
                         )
                     ) {
-                        Text("+500 ml")
+                        Text("🥛 +500")
                     }
                 }
             }
@@ -195,7 +244,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(18.dp)
             ) {
                 Text(
-                    text = "More Actions",
+                    text = "⚙️ More Actions",
                     style = MaterialTheme.typography.titleMedium,
                     color = Color(0xFF01579B)
                 )
@@ -210,7 +259,7 @@ fun HomeScreen(
                         containerColor = Color(0xFF0288D1)
                     )
                 ) {
-                    Text("Reset Today")
+                    Text(" Reset Today")
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -223,7 +272,7 @@ fun HomeScreen(
                         containerColor = Color(0xFF01579B)
                     )
                 ) {
-                    Text("Reminder Settings")
+                    Text("⏰ Reminder Settings")
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
@@ -236,7 +285,7 @@ fun HomeScreen(
                         containerColor = Color(0xFFC62828)
                     )
                 ) {
-                    Text("Logout")
+                    Text(" Logout")
                 }
             }
         }
