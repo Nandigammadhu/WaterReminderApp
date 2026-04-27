@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                                                             DataManager.saveIntake(context, intake)
 
                                                             val interval =
-                                                                document.getString("interval") ?: "2 hours"
+                                                                document.getString("interval") ?: "1 hour"
                                                             val notificationsEnabled =
                                                                 document.getBoolean("notificationsEnabled") ?: true
 
@@ -164,6 +164,34 @@ class MainActivity : ComponentActivity() {
                                 DataManager.saveInterval(context, newInterval)
                                 DataManager.saveNotificationsEnabled(context, notificationsEnabled)
 
+                                val intervalMinutes = when {
+                                    newInterval.contains("15") -> 15L
+                                    newInterval.contains("30") -> 30L
+                                    newInterval.contains("60") -> 60L
+                                    newInterval.contains("1 hour", ignoreCase = true) -> 60L
+                                    newInterval.contains("120") -> 120L
+                                    newInterval.contains("2 hour", ignoreCase = true) -> 120L
+                                    newInterval.contains("180") -> 180L
+                                    newInterval.contains("3 hour", ignoreCase = true) -> 180L
+                                    else -> 60L
+                                }
+
+                                if (notificationsEnabled) {
+                                    ReminderScheduler.scheduleReminder(context, intervalMinutes)
+                                    Toast.makeText(
+                                        context,
+                                        "Automatic reminder scheduled every $intervalMinutes minute(s)",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    ReminderScheduler.cancelReminder(context)
+                                    Toast.makeText(
+                                        context,
+                                        "Automatic reminders turned off",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+
                                 val userId = FirebaseManager.auth.currentUser?.uid
                                 if (userId != null) {
                                     val userData = hashMapOf(
@@ -176,12 +204,29 @@ class MainActivity : ComponentActivity() {
                                     FirebaseManager.db.collection("users")
                                         .document(userId)
                                         .set(userData)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(
+                                                context,
+                                                "Settings saved",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                context,
+                                                "Firestore save failed: ${e.message}",
+                                                Toast.LENGTH_LONG
+                                            ).show()
+                                        }
                                 }
 
                                 showSettings = false
                             },
                             onTestNotificationClick = {
                                 NotificationHelper.showNotification(context)
+                            },
+                            onBackClick = {
+                                showSettings = false
                             }
                         )
                     }
@@ -190,6 +235,17 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(
                             goal = goal,
                             intake = intake,
+                            onAdd100 = {
+                                intake += 100
+                                DataManager.saveIntake(context, intake)
+
+                                val userId = FirebaseManager.auth.currentUser?.uid
+                                if (userId != null) {
+                                    FirebaseManager.db.collection("users")
+                                        .document(userId)
+                                        .update("intake", intake)
+                                }
+                            },
                             onAdd250 = {
                                 intake += 250
                                 DataManager.saveIntake(context, intake)
@@ -223,7 +279,17 @@ class MainActivity : ComponentActivity() {
                                         .update("intake", intake)
                                 }
                             },
-                            onSettingsClick = { showSettings = true }
+                            onSettingsClick = { showSettings = true },
+                            onLogoutClick = {
+                                FirebaseManager.auth.signOut()
+                                showHome = false
+                                showSettings = false
+                                Toast.makeText(
+                                    context,
+                                    "Logged out successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                         )
                     }
                 }
