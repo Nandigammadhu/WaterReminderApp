@@ -65,8 +65,8 @@ class MainActivity : ComponentActivity() {
                                                     .get()
                                                     .addOnSuccessListener { document ->
                                                         if (document.exists()) {
-                                                            goal = document.getLong("goal")?.toInt() ?: goal
-                                                            intake = document.getLong("intake")?.toInt() ?: intake
+                                                            goal = document.getLong("goal")?.toInt() ?: 2000
+                                                            intake = document.getLong("intake")?.toInt() ?: 0
 
                                                             DataManager.saveGoal(context, goal)
                                                             DataManager.saveIntake(context, intake)
@@ -81,6 +81,13 @@ class MainActivity : ComponentActivity() {
                                                                 context,
                                                                 notificationsEnabled
                                                             )
+                                                        } else {
+                                                            goal = 2000
+                                                            intake = 0
+                                                            DataManager.saveGoal(context, 2000)
+                                                            DataManager.saveIntake(context, 0)
+                                                            DataManager.saveInterval(context, "1 hour")
+                                                            DataManager.saveNotificationsEnabled(context, true)
                                                         }
                                                         showHome = true
                                                     }
@@ -117,12 +124,19 @@ class MainActivity : ComponentActivity() {
 
                                             val userId = FirebaseManager.auth.currentUser?.uid
 
+                                            goal = 2000
+                                            intake = 0
+                                            DataManager.saveGoal(context, 2000)
+                                            DataManager.saveIntake(context, 0)
+                                            DataManager.saveInterval(context, "1 hour")
+                                            DataManager.saveNotificationsEnabled(context, true)
+
                                             if (userId != null) {
                                                 val userData = hashMapOf(
-                                                    "goal" to goal,
-                                                    "intake" to intake,
-                                                    "interval" to DataManager.getInterval(context),
-                                                    "notificationsEnabled" to DataManager.getNotificationsEnabled(context)
+                                                    "goal" to 2000,
+                                                    "intake" to 0,
+                                                    "interval" to "1 hour",
+                                                    "notificationsEnabled" to true
                                                 )
 
                                                 FirebaseManager.db.collection("users")
@@ -282,8 +296,14 @@ class MainActivity : ComponentActivity() {
                             onSettingsClick = { showSettings = true },
                             onLogoutClick = {
                                 FirebaseManager.auth.signOut()
+                                DataManager.clearAll(context)
+
+                                goal = 2000
+                                intake = 0
+
                                 showHome = false
                                 showSettings = false
+
                                 Toast.makeText(
                                     context,
                                     "Logged out successfully",

@@ -49,4 +49,16 @@ object DataManager {
         val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return prefs.getInt(KEY_INTAKE, 0)
     }
+
+    fun clearAll(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().clear().apply()
+    }
+
+    fun saveDefaultData(context: Context) {
+        saveGoal(context, 2000)
+        saveIntake(context, 0)
+        saveInterval(context, "1 hour")
+        saveNotificationsEnabled(context, true)
+    }
 }
